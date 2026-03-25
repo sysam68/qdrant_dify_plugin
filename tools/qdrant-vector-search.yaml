@@ -1,0 +1,125 @@
+identity:
+  name: "qdrant-vector-search"
+  author: "yaxuanm"
+  label:
+    en_US: "Qdrant · Vector Search"
+    zh_Hans: "Qdrant · 向量搜索"
+description:
+  human:
+    en_US: "Vector similarity search in Qdrant collections. Supports text input (auto-generates vector) or pre-computed vector input."
+    zh_Hans: "在 Qdrant 集合中进行向量相似度搜索。支持文本输入（自动生成向量）或预计算向量输入。"
+  llm: "Perform vector similarity search in Qdrant collections. Supports text queries or pre-computed vectors."
+parameters:
+  - name: collection
+    type: string
+    required: true
+    label:
+      en_US: Collection Name
+      zh_Hans: 集合名称
+    human_description:
+      en_US: "The name of the collection to search in."
+      zh_Hans: "要搜索的集合名称。"
+    form: llm
+  - name: embedding_model_config
+    type: model-selector
+    scope: text-embedding
+    required: true
+    label:
+      en_US: Embedding Model
+      zh_Hans: 向量化模型
+    human_description:
+      en_US: "Embedding model for text-to-vector conversion. Required when using text query."
+      zh_Hans: "文本向量化模型。使用文本查询时必需。"
+    form: form
+  - name: text
+    type: string
+    required: false
+    label:
+      en_US: Query Text
+      zh_Hans: 查询文本
+    human_description:
+      en_US: "Text query for similarity search."
+      zh_Hans: "相似度搜索的文本查询。"
+    form: llm
+    help:
+      en_US: |
+        Plain text query (e.g., "what is vector similarity?"). The tool will call the selected embedding model to generate the search vector.
+      zh_Hans: |
+        纯文本查询（例如 “什么是向量相似度？”），工具会调用所选向量化模型生成查询向量。
+  - name: vector
+    type: string
+    required: false
+    label:
+      en_US: Query Vector
+      zh_Hans: 查询向量
+    human_description:
+      en_US: "Pre-computed query vector. Overrides text if provided."
+      zh_Hans: "预计算查询向量。提供时优先于文本。"
+    form: llm
+    help:
+      en_US: |
+        Pre-computed vector. Accepts JSON array (`[0.1,0.2,...]`) or comma-separated string (`0.1,0.2,...`). Overrides `text` when provided.
+      zh_Hans: |
+        预计算向量。可填 JSON 数组（`[0.1,0.2,...]`）或逗号分隔字符串（`0.1,0.2,...`）。填写后会覆盖 `text`。
+  - name: limit
+    type: number
+    required: false
+    label:
+      en_US: Limit
+      zh_Hans: 返回数量
+    human_description:
+      en_US: "Maximum results to return (default: 10)."
+      zh_Hans: "返回结果的最大数量（默认：10）。"
+    form: llm
+    default: 10
+  - name: score_threshold
+    type: number
+    required: false
+    label:
+      en_US: Score Threshold
+      zh_Hans: 相似度阈值
+    human_description:
+      en_US: "Minimum similarity score threshold."
+      zh_Hans: "最小相似度分数阈值。"
+    form: llm
+  - name: filter
+    type: string
+    required: false
+    label:
+      en_US: Filter
+      zh_Hans: 过滤条件
+    human_description:
+      en_US: "Metadata filter in JSON format."
+      zh_Hans: "元数据过滤条件（JSON 格式）。"
+    help:
+      en_US: |
+        Qdrant filter JSON, e.g. {"must":[{"key":"category","match":{"value":"tech"}}]}. Fields must have indexes in Qdrant.
+      zh_Hans: |
+        Qdrant 过滤 JSON，例如 {"must":[{"key":"category","match":{"value":"tech"}}]}。注意使用前需在 Qdrant 建立索引。
+    form: llm
+  - name: with_payload
+    type: boolean
+    required: false
+    label:
+      en_US: With Payload
+      zh_Hans: 包含元数据
+    human_description:
+      en_US: "Include payload in results (default: true)."
+      zh_Hans: "结果中包含元数据（默认：true）。"
+    form: llm
+    default: true
+  - name: with_vector
+    type: boolean
+    required: false
+    label:
+      en_US: With Vector
+      zh_Hans: 包含向量
+    human_description:
+      en_US: "Include vectors in results (default: false)."
+      zh_Hans: "结果中包含向量（默认：false）。"
+    form: llm
+    default: false
+extra:
+  python:
+    source: tools/qdrant.py
+

@@ -1,0 +1,58 @@
+﻿identity:
+  name: "qdrant-delete-collection"
+  author: "yaxuanm"
+  label:
+    en_US: "Qdrant · Delete Collection"
+    zh_Hans: "Qdrant · 删除集合"
+description:
+  human:
+    en_US: "Permanently delete a Qdrant collection by name."
+    zh_Hans: "按名称永久删除 Qdrant 集合。"
+  llm: "Delete a Qdrant collection."
+parameters:
+  - name: operation
+    type: string
+    required: true
+    label:
+      en_US: Operation
+      zh_Hans: 操作
+    human_description:
+      en_US: "Fixed value: delete_collection."
+      zh_Hans: "固定填写 delete_collection。"
+    form: llm
+    default: "delete_collection"
+  - name: items
+    type: string
+    required: true
+    label:
+      en_US: Body (JSON)
+      zh_Hans: 请求体（JSON）
+    human_description:
+      en_US: "Advanced use only. Keep `[{}]` unless you need a custom HTTP body array."
+      zh_Hans: "仅用于高级场景。如无特殊需求请保持 `[{}]`。"
+    form: llm
+  - name: options
+    type: string
+    required: true
+    label:
+      en_US: Options (JSON)
+      zh_Hans: 选项（JSON）
+    human_description:
+      en_US: "Collection payload, e.g. {\"collection\":\"my_collection\"}."
+      zh_Hans: "集合参数，例如 {\"collection\":\"my_collection\"}。"
+    help:
+      en_US: |
+        Required keys:
+        - collection: name of the collection to delete (string, case-sensitive)
+
+        This action cannot be undone. Make sure no workflows depend on the collection.
+      zh_Hans: |
+        必填字段：
+        - collection：要删除的集合名称（区分大小写）
+
+        操作不可撤销，删除前请确认没有工作流依赖该集合。
+    form: llm
+extra:
+  python:
+    source: tools/qdrant.py
+

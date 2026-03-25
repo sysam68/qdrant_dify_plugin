@@ -1,0 +1,62 @@
+﻿identity:
+  name: "qdrant-scroll"
+  author: "yaxuanm"
+  label:
+    en_US: "Qdrant · Scroll"
+    zh_Hans: "Qdrant · 遍历（Scroll）"
+description:
+  human:
+    en_US: "Iterate through points in a collection with pagination and optional filters."
+    zh_Hans: "在集合中按分页方式遍历点，并可附加过滤条件。"
+  llm: "Scroll through Qdrant points with pagination."
+parameters:
+  - name: operation
+    type: string
+    required: true
+    label:
+      en_US: Operation
+      zh_Hans: 操作
+    human_description:
+      en_US: "Fixed value: scroll."
+      zh_Hans: "固定填写 scroll。"
+    form: llm
+    default: "scroll"
+  - name: items
+    type: string
+    required: true
+    label:
+      en_US: Scroll Request (JSON)
+      zh_Hans: 遍历请求（JSON）
+    human_description:
+      en_US: "Advanced field. Leave `[{}]` unless you need custom low-level request bodies."
+      zh_Hans: "高级选项。除非需要自定义底层请求体，否则保持 `[{}]`。"
+    form: llm
+  - name: options
+    type: string
+    required: true
+    label:
+      en_US: Options (JSON)
+      zh_Hans: 选项（JSON）
+    human_description:
+      en_US: "Provide scroll settings, e.g. {\"collection\":\"my_collection\",\"limit\":10,\"with_payload\":true}."
+      zh_Hans: "填写遍历参数，例如 {\"collection\":\"my_collection\",\"limit\":10,\"with_payload\":true}。"
+    help:
+      en_US: |
+        Common keys:
+        - collection (required)
+        - limit: number of points per batch
+        - filter: optional Qdrant filter JSON
+        - offset: use previous response `next_page_offset`
+        - with_payload / with_vector flags
+      zh_Hans: |
+        常用字段：
+        - collection（必填）
+        - limit：每批返回的点数
+        - filter：可选的 Qdrant 过滤 JSON
+        - offset：上一页响应中的 `next_page_offset`
+        - with_payload / with_vector：是否返回元数据或向量
+    form: llm
+extra:
+  python:
+    source: tools/qdrant.py
+

@@ -1,0 +1,118 @@
+﻿identity:
+  author: "yaxuanm"
+  name: "qdrant"
+  label:
+    en_US: "Qdrant Vector Database"
+    zh_Hans: "Qdrant 向量数据库"
+    pt_BR: "Banco de Dados Vetorial Qdrant"
+    ja_JP: "Qdrant ベクトルデータベース"
+  description:
+    en_US: "Connect to Qdrant vector database for semantic search, data management, and AI-powered applications"
+    zh_Hans: "连接到 Qdrant 向量数据库，用于语义搜索、数据管理和 AI 驱动的应用程序"
+    pt_BR: "Conecte-se ao banco de dados vetorial Qdrant para busca semântica, gerenciamento de dados e aplicações de IA"
+    ja_JP: "Qdrant ベクトルデータベースに接続して、セマンティック検索、データ管理、AI 駆動アプリケーションに使用"
+  icon: "icon.svg"
+credentials_for_provider:
+  base_url:
+    type: "text-input"
+    required: true
+    placeholder:
+      en_US: "https://your-cluster.cloud.qdrant.io:6333"
+      zh_Hans: "https://your-cluster.cloud.qdrant.io:6333"
+      pt_BR: "https://your-cluster.cloud.qdrant.io:6333"
+      ja_JP: "https://your-cluster.cloud.qdrant.io:6333"
+    help:
+      en_US: "Your Qdrant cluster URL.\n\nFor Qdrant Cloud:\n- Recommended format: https://xxx.cloud.qdrant.io:6333 (with port)\n- Also supports: https://xxx.cloud.qdrant.io (without port, defaults to 443)\n\nTo get your Qdrant URL:\n1. Go to Qdrant Cloud Dashboard\n2. Select your cluster\n3. Copy the URL from the cluster details page\n\nFor self-hosted:\n- Format: http://localhost:6333 (or your server address)\n- Deploy locally: docker run -p 6333:6333 qdrant/qdrant\n\nNote: Plugin automatically uses Database API (:6333) for data operations and Cloud Management API (:443) for collection management."
+      zh_Hans: "您的 Qdrant 集群 URL。\n\n对于 Qdrant Cloud：\n- 推荐格式：https://xxx.cloud.qdrant.io:6333（带端口）\n- 也支持：https://xxx.cloud.qdrant.io（不带端口，默认 443）\n\n获取 Qdrant URL：\n1. 前往 Qdrant Cloud Dashboard\n2. 选择您的集群\n3. 从集群详情页复制 URL\n\n对于自托管：\n- 格式：http://localhost:6333（或您的服务器地址）\n- 本地部署：docker run -p 6333:6333 qdrant/qdrant\n\n注意：插件会自动为数据操作使用 Database API (:6333)，为集合管理使用 Cloud Management API (:443)。"
+      pt_BR: "URL da instância Qdrant. Recomendado: https://xxx.cloud.qdrant.io:6333 (com porta). Também suporta: https://xxx.cloud.qdrant.io (sem porta, padrão 443).\n\nSe você não tem uma instância Qdrant:\n- Crie uma conta gratuita em https://cloud.qdrant.io/\n- Ou implante localmente: docker run -p 6333:6333 qdrant/qdrant"
+      ja_JP: "Qdrant インスタンス URL。推奨：https://xxx.cloud.qdrant.io:6333（ポート付き）。ポートなし（デフォルト 443）もサポート。\n\nQdrant インスタンスがない場合：\n- https://cloud.qdrant.io/ で無料アカウントを作成\n- またはローカルにデプロイ：docker run -p 6333:6333 qdrant/qdrant"
+    label:
+      en_US: "Qdrant URL"
+      zh_Hans: "Qdrant URL"
+      pt_BR: "URL do Qdrant"
+      ja_JP: "Qdrant URL"
+  api_key:
+    type: "secret-input"
+    required: false
+    placeholder:
+      en_US: "Your Qdrant API key (optional)"
+      zh_Hans: "您的 Qdrant API 密钥（可选）"
+      pt_BR: "Sua chave API do Qdrant (opcional)"
+      ja_JP: "Qdrant API キー（オプション）"
+    help:
+      en_US: "API Key for authentication.\n\nTo configure this credential, you'll need:\n- A Qdrant cluster (Cloud or self-hosted)\n- An API Key (for Qdrant Cloud)\n\nTo set it up:\n1. Go to Qdrant Cloud Dashboard\n2. Select Access Management to display available API keys (or go to the API Keys section of the Cluster detail page)\n3. Select Create\n4. Select the cluster you want the key to have access to in the dropdown\n5. Select OK\n6. Copy the API Key and enter it here\n\n⚠️ Important: Ensure the API Key has 'manage/write' permissions for all operations (including auto-create collection).\n\nFor self-hosted instances without authentication, leave this empty."
+      zh_Hans: "用于身份验证的 API Key。\n\n配置此凭证需要：\n- Qdrant 集群（Cloud 或自托管）\n- API Key（Qdrant Cloud 需要）\n\n设置步骤：\n1. 前往 Qdrant Cloud Dashboard\n2. 选择 Access Management 查看可用 API 密钥（或前往集群详情页的 API Keys 部分）\n3. 选择 Create\n4. 在下拉菜单中选择要授予访问权限的集群\n5. 选择 OK\n6. 复制 API Key 并在此处输入\n\n⚠️ 重要：确保 API Key 具有 'manage/write' 权限以执行所有操作（包括自动创建集合）。\n\n对于没有身份验证的自托管实例，请留空。"
+      pt_BR: "Database API Key para autenticação (começa com 'eyJhb' para controle de acesso granular). Crie uma em Qdrant Cloud Dashboard → API Keys. Certifique-se de que tenha permissões 'manage/write' para todas as operações (incluindo criação automática de coleção). Deixe vazio para instâncias abertas."
+      ja_JP: "認証用の Database API Key（'eyJhb' で始まるものは細かいアクセス制御）。Qdrant Cloud Dashboard → API Keys で作成。すべての操作（コレクションの自動作成を含む）に 'manage/write' 権限が必要です。オープンインスタンスの場合は空欄。"
+    label:
+      en_US: "API Key"
+      zh_Hans: "API 密钥"
+      pt_BR: "Chave API"
+      ja_JP: "APIキー"
+  default_vector_size:
+    type: "text-input"
+    required: false
+    label:
+      en_US: "Default Vector Dimensions"
+      zh_Hans: "默认向量维度"
+      pt_BR: "Dimensões padrão do vetor"
+      ja_JP: "デフォルトベクトル次元数"
+    help:
+      en_US: "Default vector dimension for auto-created collections. Must match your embedding model's dimension.\n\nCommon dimensions:\n- OpenAI text-embedding-ada-002: 1536\n- OpenAI text-embedding-3-small: 1536\n- OpenAI text-embedding-3-large: 3072\n- BERT-base: 768\n- Cohere embed-english-v3.0: 1024\n\n⚠️ Important: The embedding model you select in tools must generate vectors of this dimension. Enter as a number (e.g., '1536')."
+      zh_Hans: "自动创建集合时的默认向量维度。必须与您的嵌入模型维度匹配。\n\n常见维度：\n- OpenAI text-embedding-ada-002: 1536\n- OpenAI text-embedding-3-small: 1536\n- OpenAI text-embedding-3-large: 3072\n- BERT-base: 768\n- Cohere embed-english-v3.0: 1024\n\n⚠️ 重要：在工具中选择的嵌入模型必须生成此维度的向量。请输入数字（如 '1536'）。"
+      pt_BR: "Dimensão padrão do vetor para coleções criadas automaticamente (ex: 1536 para OpenAI, 768 para BERT). Garante que todos os vetores tenham dimensões consistentes. Digite como número (ex: '1536')."
+      ja_JP: "自動作成されるコレクションのデフォルトベクトル次元数（例：OpenAI は 1536、BERT は 768）。コレクション内のすべてのベクトルの次元数を統一します。数字で入力してください（例：'1536'）。"
+    default: "1536"
+  default_distance:
+    type: "select"
+    required: false
+    label:
+      en_US: "Default Distance Metric"
+      zh_Hans: "默认距离度量"
+      pt_BR: "Métrica de distância padrão"
+      ja_JP: "デフォルト距離メトリック"
+    help:
+      en_US: "Default distance metric for auto-created collections. Cosine is recommended for most text embeddings."
+      zh_Hans: "自动创建集合时的默认距离度量。对于大多数文本向量，推荐使用 Cosine。"
+      pt_BR: "Métrica de distância padrão para coleções criadas automaticamente. Cosine é recomendado para a maioria dos embeddings de texto."
+      ja_JP: "自動作成されるコレクションのデフォルト距離メトリック。テキスト埋め込みには Cosine が推奨されます。"
+    options:
+      - value: "Cosine"
+        label:
+          en_US: "Cosine"
+      - value: "Euclid"
+        label:
+          en_US: "Euclid"
+      - value: "Dot"
+        label:
+          en_US: "Dot"
+    default: "Cosine"
+  extra_headers:
+    type: "text-input"
+    required: false
+    label:
+      en_US: "Additional Headers (JSON)"
+      zh_Hans: "额外请求头（JSON）"
+      pt_BR: "Cabeçalhos adicionais (JSON)"
+      ja_JP: "追加ヘッダー（JSON）"
+    placeholder:
+      en_US: "{\"X-Custom-Header\": \"value\"}"
+      zh_Hans: "{\"X-Custom-Header\": \"value\"}"
+      pt_BR: "{\"X-Custom-Header\": \"value\"}"
+      ja_JP: "{\"X-Custom-Header\": \"value\"}"
+    help:
+      en_US: "Additional HTTP headers to include in requests (JSON format). Useful for custom authentication or proxy configurations."
+      zh_Hans: "请求中包含的额外 HTTP 头（JSON 格式）。用于自定义认证或代理配置。"
+      pt_BR: "Cabeçalhos HTTP adicionais para incluir nas solicitações (formato JSON). Útil para autenticação personalizada ou configurações de proxy."
+      ja_JP: "リクエストに含める追加の HTTP ヘッダー（JSON 形式）。カスタム認証やプロキシ設定に便利です。"
+
+tools:
+  - tools/qdrant-upsert-text.yaml
+  - tools/qdrant-upsert-point.yaml
+  - tools/qdrant-vector-search.yaml
+  - tools/qdrant-hybrid-search.yaml
+  - tools/qdrant-data-management.yaml
+  - tools/qdrant-collection-management.yaml
+extra:
+  python:
+    source: provider/qdrant.py

@@ -1,0 +1,164 @@
+identity:
+  name: "qdrant-upsert-text"
+  author: "yaxuanm"
+  label:
+    en_US: "Qdrant · Upsert Text"
+    zh_Hans: "Qdrant · 写入文本"
+description:
+  human:
+    en_US: "Insert or update text chunks. Each chunk is embedded automatically and stored as its own point (auto-creates the collection if needed)."
+    zh_Hans: "写入或更新文本分片。每个分片会自动生成向量并作为独立点保存，必要时自动创建集合。"
+  llm: "Upsert text chunks into a Qdrant collection. Provide {\"chunks\": [{\"text\": \"...\"}]} and each chunk will be embedded + stored."
+parameters:
+  - name: collection
+    type: string
+    required: true
+    label:
+      en_US: Collection Name
+      zh_Hans: 集合名称
+    human_description:
+      en_US: "Name of the Qdrant collection that will hold the points. Supports literal text or a mapped variable."
+      zh_Hans: "目标 Qdrant 集合的名称。支持直接输入文本或映射变量。"
+    form: llm
+  - name: payload
+    type: string
+    required: false
+    label:
+      en_US: Payload (Optional)
+      zh_Hans: Payload（可选）
+    human_description:
+      en_US: "Optional JSON object applied as the Qdrant `payload` for each inserted point. Supports literal text or a mapped variable."
+      zh_Hans: "可选 JSON 对象，会作为每个写入点的 Qdrant `payload`。支持直接输入文本或映射变量。"
+    help:
+      en_US: |
+        Provide a valid JSON object, for example:
+        {"source": "crm", "tenant": "acme"}
+
+        Notes
+        • The value must be a JSON object, not an array or plain text.
+        • The same payload is applied to every generated point in this upsert.
+        • You can bind a variable that resolves to a JSON string/object.
+      zh_Hans: |
+        请提供合法的 JSON 对象，例如：
+        {"source": "crm", "tenant": "acme"}
+
+        说明
+        • 该值必须是 JSON 对象，不能是数组或纯文本。
+        • 本次 upsert 生成的每个点都会应用同一个 payload。
+        • 也可以绑定解析为 JSON 字符串/对象的变量。
+    form: llm
+  - name: vector_name
+    type: string
+    required: false
+    label:
+      en_US: Vector Name (Optional)
+      zh_Hans: 向量名称（可选）
+    human_description:
+      en_US: "Optional named vector key for Qdrant collections configured with named vectors. Supports literal text or a mapped variable."
+      zh_Hans: "可选的命名向量键，用于已配置命名向量的 Qdrant 集合。支持直接输入文本或映射变量。"
+    help:
+      en_US: |
+        Leave empty for collections using the default unnamed vector.
+        Set a value such as `dense` when your collection uses named vectors.
+      zh_Hans: |
+        对于使用默认匿名向量的集合请留空。
+        当集合使用命名向量时，可填写如 `dense` 这样的值。
+    form: llm
+  - name: texts
+    type: array
+    items:
+      type: object
+      properties:
+        text:
+          type: string
+          description: "Text content of the chunk"
+      required:
+        - text
+      additionalProperties: false
+    required: true
+    label:
+      en_US: Texts
+      zh_Hans: 文本分片
+    human_description:
+      en_US: "Array of chunk objects. Each chunk must provide a `text` field."
+      zh_Hans: "分片对象数组。每个分片都需要包含 `text` 字段。"
+    help:
+      en_US: |
+        Expected payload
+        {
+          "chunks": [
+            {"text": "First paragraph"},
+            {"text": "Second paragraph"}
+          ]
+        }
+
+        Tips
+        • Root must be an object containing a `chunks` array.
+        • Each chunk is its own object with a non-empty `text` string.
+        • Bind Code/Tool output that already emits the JSON structure, or paste it directly.
+      zh_Hans: |
+        期望格式
+        {
+          "chunks": [
+            {"text": "第一段"},
+            {"text": "第二段"}
+          ]
+        }
+        提示
+        • 根对象必须包含一个 `chunks` 数组。
+        • 每个分片都是带有非空 `text` 字段的对象。
+        • 可以直接绑定 Code/Tool 的 JSON 输出，或粘贴符合格式的 JSON 字符串。
+    form: llm
+  - name: embedding_model_config
+    type: model-selector
+    scope: text-embedding
+    required: true
+    label:
+      en_US: Embedding Model
+      zh_Hans: 向量化模型
+    human_description:
+      en_US: "Model used to convert each chunk into a dense vector."
+      zh_Hans: "用于将分片转换成稠密向量的模型。"
+    help:
+      en_US: |
+        Configure once in the tool form.
+        • Dimension must match the collection (check provider defaults).
+        • Examples: 768 (BERT), 1024 (Cohere), 1536 (OpenAI text-embedding-3-small), 3072 (OpenAI text-embedding-3-large).
+      zh_Hans: |
+        在工具表单中配置一次即可。
+        • 模型输出维度必须和集合一致（可在 Provider 默认设置中查看）。
+        • 示例：768（BERT）、1024（Cohere）、1536（OpenAI text-embedding-3-small）、3072（OpenAI text-embedding-3-large）。
+    form: form
+  - name: point_ids
+    type: string
+    required: false
+    label:
+      en_US: Point IDs (Optional)
+      zh_Hans: 点 ID（可选）
+    human_description:
+      en_US: "Override automatically generated IDs."
+      zh_Hans: "覆盖自动生成的 UUID，自定义点 ID。"
+    help:
+      en_US: |
+        Comma-separated list (e.g., `1,2,3` or `uuid-a,uuid-b`).
+        • Leave blank to auto-generate UUIDs.
+        • If provided, the count must match the number of chunks.
+      zh_Hans: |
+        逗号分隔列表（如 `1,2,3` 或 `uuid-a,uuid-b`）。
+        • 留空则自动生成 UUID。
+        • 如填写，数量必须与 `chunks` 数量一致。
+    form: llm
+  - name: wait
+    type: boolean
+    required: false
+    label:
+      en_US: Wait for Completion
+      zh_Hans: 等待完成
+    human_description:
+      en_US: "Block until Qdrant confirms the write (default: true)."
+      zh_Hans: "等待 Qdrant 确认写入（默认 true）。"
+    form: llm
+    default: true
+extra:
+  python:
+    source: tools/qdrant.py

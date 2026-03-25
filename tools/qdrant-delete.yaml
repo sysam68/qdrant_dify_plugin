@@ -1,0 +1,56 @@
+﻿identity:
+  name: "qdrant-delete"
+  author: "yaxuanm"
+  label:
+    en_US: "Qdrant · Delete Points"
+    zh_Hans: "Qdrant · 删除点"
+description:
+  human:
+    en_US: "Delete points from a Qdrant collection by specifying point IDs or a filter."
+    zh_Hans: "按点 ID 或过滤条件删除 Qdrant 集合中的点。"
+  llm: "Delete points from Qdrant (IDs or filter)."
+parameters:
+  - name: operation
+    type: string
+    required: true
+    label:
+      en_US: Operation
+      zh_Hans: 操作
+    human_description:
+      en_US: "Fixed value: delete."
+      zh_Hans: "固定填写 delete。"
+    form: llm
+    default: "delete"
+  - name: items
+    type: string
+    required: true
+    label:
+      en_US: Delete Selector (JSON)
+      zh_Hans: 删除选择器（JSON）
+    human_description:
+      en_US: "JSON array describing what to delete. Examples: [{\"points\":[1,2,3]}] or [{\"filter\":{...}}]."
+      zh_Hans: "描述删除对象的 JSON 数组。示例：[{\"points\":[1,2,3]}] 或 [{\"filter\":{...}}]。"
+    help:
+      en_US: |
+        Wrap the selector in an array. Each entry can contain:
+        - points: e.g. {"points":[1,2,3]}
+        - filter: e.g. {"filter":{"must":[{"key":"status","match":{"value":"inactive"}}]}}
+      zh_Hans: |
+        必须包裹在数组内。每个元素可包含：
+        - points：例如 {"points":[1,2,3]}
+        - filter：例如 {"filter":{"must":[{"key":"status","match":{"value":"inactive"}}]}}
+    form: llm
+  - name: options
+    type: string
+    required: true
+    label:
+      en_US: Options (JSON)
+      zh_Hans: 选项（JSON）
+    human_description:
+      en_US: "Provide the collection name, e.g. {\"collection\":\"my_collection\"}."
+      zh_Hans: "填写集合名称，例如 {\"collection\":\"my_collection\"}。"
+    form: llm
+extra:
+  python:
+    source: tools/qdrant.py
+

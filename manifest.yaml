@@ -1,0 +1,43 @@
+version: 0.0.2
+type: plugin
+author: yaxuanm
+name: qdrant
+label:
+  en_US: Qdrant
+  ja_JP: Qdrant
+  zh_Hans: Qdrant
+  pt_BR: Qdrant
+description:
+  en_US: A comprehensive Qdrant vector database integration plugin for Dify. Supports vector storage (upsert), similarity search (query), data management (scroll/delete), and collection management. Works seamlessly with Dify's embedding models.
+  ja_JP: Dify用の包括的なQdrantベクトルデータベース統合プラグイン。ベクトルストレージ（upsert）、類似検索（query）、データ管理（scroll/delete）、コレクション管理をサポート。Difyの埋め込みモデルとシームレスに連携します。
+  zh_Hans: 一个全面的 Qdrant 向量数据库集成插件，适用于 Dify。支持向量存储（upsert）、相似度搜索（query）、数据管理（scroll/delete）和集合管理。与 Dify 的嵌入模型无缝协作。
+  pt_BR: Um plugin abrangente de integração de banco de dados vetorial Qdrant para Dify. Suporta armazenamento de vetores (upsert), busca por similaridade (query), gerenciamento de dados (scroll/delete) e gerenciamento de coleções. Funciona perfeitamente com os modelos de embedding do Dify.
+icon: icon.svg
+icon_dark: icon-dark.svg
+resource:
+  memory: 268435456
+  permission:
+    tool:
+      enabled: true
+    model:
+      enabled: true
+      text_embedding: true
+plugins:
+  tools:
+    - provider/qdrant.yaml
+meta:
+  version: 0.0.2
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main
+  minimum_dify_version: null
+tags:
+  - search
+  - utilities
+created_at: 2025-11-12T10:45:38.1658483-05:00
+privacy: PRIVACY.md
+verified: false

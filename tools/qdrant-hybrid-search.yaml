@@ -1,0 +1,191 @@
+﻿identity:
+  name: "qdrant-hybrid-search"
+  author: "yaxuanm"
+  label:
+    en_US: "Qdrant · Hybrid Search"
+    zh_Hans: "Qdrant · 混合搜索"
+description:
+  human:
+    en_US: "Hybrid search that fuses dense vectors and sparse (BM25) signals via Qdrant Query API (1.10+)."
+    zh_Hans: "基于 Qdrant Query API (1.10+) 的稠密 + 稀疏混合搜索，并通过 RRF 融合结果。"
+  llm: "Perform hybrid search in Qdrant by combining dense and sparse retrieval with fusion."
+parameters:
+  - name: collection
+    type: string
+    required: true
+    label:
+      en_US: Collection Name
+      zh_Hans: 集合名称
+    human_description:
+      en_US: "Target Qdrant collection (must already exist and contain vectors)."
+      zh_Hans: "目标 Qdrant 集合（需已存在且包含向量）。"
+    help:
+      en_US: "Case-sensitive. Examples: 'concepts', 'guides'."
+      zh_Hans: "区分大小写。例如：'concepts'、'guides'。"
+    form: llm
+  - name: embedding_model_config
+    type: model-selector
+    scope: text-embedding
+    required: false
+    label:
+      en_US: Embedding Model (Dense)
+      zh_Hans: 向量化模型（稠密）
+    human_description:
+      en_US: "Model used to convert query text into dense vectors. Dimension must match collection."
+      zh_Hans: "用于将查询文本转换为稠密向量的模型，维度需与集合一致。"
+    form: form
+  - name: text
+    type: string
+    required: false
+    label:
+      en_US: Query Text
+      zh_Hans: 查询文本
+    human_description:
+      en_US: "Plain-text query used to build both dense embedding and BM25 sparse vector."
+      zh_Hans: "用于同时生成稠密嵌入和 BM25 稀疏向量的纯文本查询。"
+    form: llm
+  - name: dense_vector
+    type: string
+    required: false
+    label:
+      en_US: Dense Vector (Override)
+      zh_Hans: 稠密向量（可选覆盖）
+    human_description:
+      en_US: "Optional pre-computed dense vector. Accepts JSON array or comma-separated numbers."
+      zh_Hans: "可选的预计算稠密向量，支持 JSON 数组或逗号分隔数字。"
+    help:
+      en_US: "Use when you already have an embedding (e.g., {{#code.embedding#}}). Text is still required for sparse vector."
+      zh_Hans: "已有嵌入时使用（如 {{#code.embedding#}}）。仍需提供 text 以生成稀疏向量。"
+    form: llm
+  - name: sparse_vector
+    type: string
+    required: false
+    label:
+      en_US: Sparse Vector (Override)
+      zh_Hans: 稀疏向量（可选覆盖）
+    human_description:
+      en_US: "Optional BM25-style sparse vector. JSON object with 'indices' and 'values'."
+      zh_Hans: "可选 BM25 稀疏向量，JSON 对象需包含 'indices' 和 'values'。"
+    help:
+      en_US: "Only fill when using a custom sparse encoder. Otherwise leave blank to auto-generate from text."
+      zh_Hans: "仅使用自定义稀疏编码器时填写，否则留空以根据 text 自动生成。"
+    form: llm
+  - name: using_dense
+    type: string
+    required: false
+    label:
+      en_US: Dense Vector Name
+      zh_Hans: 稠密向量名称
+    human_description:
+      en_US: "Specify named dense vector if collection stores multiple embeddings (e.g., 'text', 'image')."
+      zh_Hans: "集合有多个命名稠密向量时指定（如 'text'、'image'）。"
+    form: llm
+  - name: using_sparse
+    type: string
+    required: false
+    label:
+      en_US: Sparse Vector Name
+      zh_Hans: 稀疏向量名称
+    human_description:
+      en_US: "Named sparse vector to use when collection exposes multiple sparse stores."
+      zh_Hans: "集合存在多个稀疏向量存储时指定其名称。"
+    form: llm
+  - name: fusion_method
+    type: string
+    required: false
+    label:
+      en_US: Fusion Method
+      zh_Hans: 融合方式
+    human_description:
+      en_US: "How to combine dense + sparse results. Default: 'rrf'."
+      zh_Hans: "稠密/稀疏结果的融合方式，默认 'rrf'。"
+    help:
+      en_US: "'rrf' (Reciprocal Rank Fusion) is recommended. Leave blank to receive separate lists."
+      zh_Hans: "推荐使用 'rrf'（倒数排名融合）。留空则返回各自结果列表。"
+    form: llm
+    default: "rrf"
+  - name: limit
+    type: number
+    required: false
+    label:
+      en_US: Result Limit
+      zh_Hans: 返回数量
+    human_description:
+      en_US: "Maximum fused results to return (default 10)."
+      zh_Hans: "融合后返回的最大结果数（默认 10）。"
+    form: llm
+    default: 10
+  # MMR parameters temporarily hidden due to bug
+  # - name: mmr_candidates_limit
+  #   type: number
+  #   required: false
+  #   label:
+  #     en_US: MMR Candidates Limit
+  #     zh_Hans: MMR 候选数量
+  #   human_description:
+  #     en_US: "Number of candidates to preselect for MMR reranking (default: 100). Higher values improve diversity but increase computation."
+  #     zh_Hans: "MMR 重排序的预选候选数量（默认 100），值越大多样性越好但计算量增加。"
+  #   help:
+  #     en_US: "Only used when mmr_diversity is set. Should be 2-10× the result limit for best quality."
+  #     zh_Hans: "仅在设置 mmr_diversity 时使用，建议为返回数量的 2-10 倍以获得最佳质量。"
+  #   form: llm
+  #   default: 100
+  - name: prefetch_limit
+    type: number
+    required: false
+    label:
+      en_US: Prefetch Limit
+      zh_Hans: 预取数量
+    human_description:
+      en_US: "Candidates per method before fusion (default 20). Use 2-5 limit for best quality."
+      zh_Hans: "融合前每种检索预取的候选数（默认 20），建议为 limit 的 2-5 倍。"
+    form: llm
+    default: 20
+  # - name: mmr_diversity
+  #   type: number
+  #   required: false
+  #   label:
+  #     en_US: MMR Diversity
+  #     zh_Hans: MMR 多样性
+  #   human_description:
+  #     en_US: "Maximum Marginal Relevance diversity parameter (0.0-1.0). Controls balance between relevance and diversity. 0.0 = pure relevance, 1.0 = pure diversity, 0.5 = balanced. Applies only to dense vector search."
+  #     zh_Hans: "最大边际相关性多样性参数（0.0-1.0），控制相关性与多样性的平衡。0.0 = 纯相关性，1.0 = 纯多样性，0.5 = 平衡。仅适用于稠密向量搜索。"
+  #   help:
+  #     en_US: "Enable MMR reranking to prevent similar results. Only applies to dense vectors (sparse vectors don't support MMR). Leave blank to disable MMR. Recommended: 0.5 for balanced results."
+  #     zh_Hans: "启用 MMR 重排序以避免相似结果。仅适用于稠密向量（稀疏向量不支持 MMR）。留空则禁用 MMR。推荐值：0.5 以获得平衡结果。"
+  #   form: llm
+  - name: filter
+    type: string
+    required: false
+    label:
+      en_US: Filter
+      zh_Hans: 过滤条件
+    human_description:
+      en_US: "Qdrant metadata filter (JSON). Requires indexed payload fields."
+      zh_Hans: "Qdrant 元数据过滤（JSON），字段需已建立索引。"
+    form: llm
+  - name: with_payload
+    type: boolean
+    required: false
+    label:
+      en_US: With Payload
+      zh_Hans: 包含元数据
+    human_description:
+      en_US: "Include payload/metadata in each point (default true)."
+      zh_Hans: "结果中是否包含元数据（默认 true）。"
+    form: llm
+    default: true
+  - name: with_vector
+    type: boolean
+    required: false
+    label:
+      en_US: With Vector
+      zh_Hans: 包含向量
+    human_description:
+      en_US: "Return vectors in responses (default false; enables debugging but increases payload size)."
+      zh_Hans: "是否返回向量（默认 false，仅调试需要，体积较大）。"
+    form: llm
+    default: false
+extra:
+  python:
+    source: tools/qdrant.py

@@ -1,0 +1,60 @@
+﻿identity:
+  name: "qdrant-collection-management"
+  author: "yaxuanm"
+  label:
+    en_US: "Qdrant · Collection Management"
+    zh_Hans: "Qdrant · 集合管理"
+description:
+  human:
+    en_US: "Create, delete, or get information about collections. Choose an operation below."
+    zh_Hans: "创建、删除集合或获取集合信息。请在下方选择具体操作。"
+  llm: "Provide create_collection, delete_collection, and get_collection_info operations for Qdrant collections."
+parameters:
+  - name: operation
+    type: string
+    required: false
+    label:
+      en_US: Operation
+      zh_Hans: 操作
+    human_description:
+      en_US: "Operation type: create_collection, delete_collection, or get_collection_info (default: get_collection_info)."
+      zh_Hans: "操作类型：create_collection、delete_collection 或 get_collection_info（默认：get_collection_info）。"
+    form: llm
+    default: "get_collection_info"
+  - name: collection
+    type: string
+    required: true
+    label:
+      en_US: Collection Name
+      zh_Hans: 集合名称
+    human_description:
+      en_US: "The name of the collection."
+      zh_Hans: "集合名称。"
+    form: llm
+  - name: vector_size
+    type: number
+    required: false
+    label:
+      en_US: Vector Size (for create only)
+      zh_Hans: 向量维度（仅创建时使用）
+    human_description:
+      en_US: "Vector dimension. Uses Provider default if not provided."
+      zh_Hans: "向量维度。未提供时使用 Provider 默认值。"
+    help:
+      en_US: "Vector dimension for the collection.\n\n⚠️ Important: Must match your embedding model's dimension.\n- Common dimensions:\n  - OpenAI text-embedding-ada-002: 1536\n  - OpenAI text-embedding-3-small: 1536\n  - OpenAI text-embedding-3-large: 3072\n  - BERT-base: 768\n  - Cohere embed-english-v3.0: 1024\n\nExample: 1536\n\nUses Provider default if not provided."
+      zh_Hans: "集合的向量维度。\n\n⚠️ 重要：必须与嵌入模型维度匹配。\n- 常见维度：\n  - OpenAI text-embedding-ada-002: 1536\n  - OpenAI text-embedding-3-small: 1536\n  - OpenAI text-embedding-3-large: 3072\n  - BERT-base: 768\n  - Cohere embed-english-v3.0: 1024\n\n示例：1536\n\n未提供时使用 Provider 默认值。"
+    form: llm
+  - name: distance
+    type: string
+    required: false
+    label:
+      en_US: Distance Metric (for create only)
+      zh_Hans: 距离度量（仅创建时使用）
+    human_description:
+      en_US: "Distance metric: Cosine, Euclid, or Dot (default: Cosine)."
+      zh_Hans: "距离度量：Cosine、Euclid 或 Dot（默认：Cosine）。"
+    form: llm
+    default: "Cosine"
+extra:
+  python:
+    source: tools/qdrant.py

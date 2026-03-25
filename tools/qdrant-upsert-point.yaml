@@ -1,0 +1,102 @@
+identity:
+  name: "qdrant-upsert-point"
+  author: "yaxuanm"
+  label:
+    en_US: "Qdrant · Upsert Point"
+    zh_Hans: "Qdrant · 写入点"
+description:
+  human:
+    en_US: "Insert or update points using the native Qdrant format (id + vector + payload). Collections are created automatically when missing."
+    zh_Hans: "使用原生 Qdrant 点格式（id + vector + payload）写入或更新数据。若集合不存在会自动创建。"
+  llm: "Upsert points into Qdrant by providing an array of {id, vector, payload}."
+parameters:
+  - name: collection
+    type: string
+    required: true
+    label:
+      en_US: Collection Name
+      zh_Hans: 集合名称
+    human_description:
+      en_US: "Target collection that will store the points."
+      zh_Hans: "用于存储点数据的集合名称。"
+    form: llm
+  - name: data
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Point ID (integer or UUID string)"
+        vector:
+          type: array
+          items:
+            type: number
+          description: "Vector array"
+        payload:
+          type: object
+          description: "Metadata object"
+      required:
+        - id
+        - vector
+        - payload
+      additionalProperties: false
+    required: true
+    label:
+      en_US: Data
+      zh_Hans: 点数据
+    human_description:
+      en_US: "Array of point objects. Each element must contain id, vector, and payload."
+      zh_Hans: "点对象数组，每个对象都必须包含 id、vector、payload。"
+    help:
+      en_US: |
+        Required structure (array of objects):
+        [
+          {
+            "id": 1,
+            "vector": [0.1, 0.2, 0.3],
+            "payload": {"text": "hello"}
+          }
+        ]
+
+        Guidelines
+        - Always wrap the objects inside an array, even for a single point.
+        - `id`: integer or string; must be unique per point.
+        - `vector`: numeric array whose dimension matches the collection.
+        - `payload`: JSON object (use {} if you have no metadata).
+        - You can bind an upstream Code/Tool output that already returns `[{...}]`.
+
+        Common mistakes: sending a lone object instead of an array, mixing data types inside the vector, or omitting the payload key.
+      zh_Hans: |
+        必需结构（对象数组）：
+        [
+          {
+            "id": 1,
+            "vector": [0.1, 0.2, 0.3],
+            "payload": {"text": "hello"}
+          }
+        ]
+
+        指南
+        - 就算只有一个点也必须包裹在数组里。
+        - `id`：整数或字符串，需要唯一。
+        - `vector`：与集合维度一致的数字数组。
+        - `payload`：JSON 对象（无元数据可填 {}）。
+        - 可直接绑定上游 Code/Tool 输出的 `[{...}]`。
+
+        常见错误：传入单个对象而非数组、向量内含非数字、缺少 payload 字段。
+    form: llm
+  - name: wait
+    type: boolean
+    required: false
+    label:
+      en_US: Wait for Completion
+      zh_Hans: 等待完成
+    human_description:
+      en_US: "Block until Qdrant acknowledges the write (default: true)."
+      zh_Hans: "等待 Qdrant 确认写入（默认 true）。"
+    form: llm
+    default: true
+extra:
+  python:
+    source: tools/qdrant.py

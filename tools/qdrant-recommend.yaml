@@ -1,0 +1,81 @@
+﻿identity:
+  name: "qdrant-recommend"
+  author: "yaxuanm"
+  label:
+    en_US: "Qdrant · Recommend"
+    zh_Hans: "Qdrant · 推荐"
+description:
+  human:
+    en_US: "Recommend points similar to positive examples (and dissimilar to negatives) within a collection."
+    zh_Hans: "在集合中根据正向样本（可选负向样本）推荐相似的点。"
+  llm: "Recommend Qdrant points using positive/negative example IDs."
+parameters:
+  - name: operation
+    type: string
+    required: true
+    label:
+      en_US: Operation
+      zh_Hans: 操作
+    human_description:
+      en_US: "Fixed value: recommend."
+      zh_Hans: "固定填写 recommend。"
+    form: llm
+    default: "recommend"
+  - name: items
+    type: string
+    required: true
+    label:
+      en_US: Examples (JSON)
+      zh_Hans: 示例（JSON）
+    human_description:
+      en_US: "JSON array describing positive/negative example IDs. Example: [{\"positive\":[1,2],\"negative\":[]}]"
+      zh_Hans: "描述正/负样本 ID 的 JSON 数组。示例：[{\"positive\":[1,2],\"negative\":[]}]"
+    help:
+      en_US: |
+        Wrap in array. Each entry supports:
+        - positive: list of point IDs the result should mimic
+        - negative: list of point IDs to avoid (optional)
+
+        Example payload:
+        [
+          {"positive":[101,102], "negative":[205]},
+          {"positive":["uuid-a"], "negative":[]}
+        ]
+      zh_Hans: |
+        必须放在数组内。每个元素支持：
+        - positive：结果应相似的点 ID 列表
+        - negative：需要避开的点 ID 列表（可选）
+
+        示例：
+        [
+          {"positive":[101,102], "negative":[205]},
+          {"positive":["uuid-a"], "negative":[]}
+        ]
+    form: llm
+  - name: options
+    type: string
+    required: true
+    label:
+      en_US: Options (JSON)
+      zh_Hans: 选项（JSON）
+    human_description:
+      en_US: "Recommendation options, e.g. {\"collection\":\"my_collection\",\"limit\":5,\"with_payload\":true}."
+      zh_Hans: "推荐参数，例如 {\"collection\":\"my_collection\",\"limit\":5,\"with_payload\":true}。"
+    help:
+      en_US: |
+        Common keys:
+        - collection (required)
+        - limit: number of recommendations
+        - with_payload / with_vector
+        - filter: optional metadata constraints
+      zh_Hans: |
+        常用字段：
+        - collection（必填）
+        - limit：返回推荐数量
+        - with_payload / with_vector：是否包含元数据或向量
+        - filter：可选的元数据过滤条件
+    form: llm
+extra:
+  python:
+    source: tools/qdrant.py
+

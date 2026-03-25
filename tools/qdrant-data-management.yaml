@@ -1,0 +1,110 @@
+﻿identity:
+  name: "qdrant-data-management"
+  author: "yaxuanm"
+  label:
+    en_US: "Qdrant · Data Management"
+    zh_Hans: "Qdrant · 数据管理"
+description:
+  human:
+    en_US: "Query, Scroll, or Delete points in a collection. Query points by IDs or filter (NOT vector search - use Vector Search tool for similarity search), scroll through all points, or delete points by IDs or filter."
+    zh_Hans: "在集合中查询、遍历或删除点。可按ID或过滤条件查询点（非向量搜索 - 向量搜索请使用 Vector Search 工具），遍历所有点，或按ID或过滤条件删除点。"
+  llm: "Provide query (retrieve points by IDs or filter - NOT vector similarity search), scroll (list all points), and delete operations for Qdrant points. For vector similarity search, use the Vector Search tool instead."
+parameters:
+  - name: operation
+    type: string
+    required: false
+    label:
+      en_US: Operation
+      zh_Hans: 操作
+    human_description:
+      en_US: "Operation type: query (retrieve points by IDs or filter), scroll (list all points), or delete (remove points by IDs or filter). Default: query."
+      zh_Hans: "操作类型：query（按ID或过滤条件查询点）、scroll（遍历所有点）或 delete（按ID或过滤条件删除点）。默认：query。"
+    help:
+      en_US: "Operation type to perform:\n\n1. **query**: Retrieve points by IDs and/or filter\n   - Use with point_ids and/or filter\n   - Returns matching points with payload/vectors\n   - Example: query points with IDs [1,2,3] and category='tech'\n\n2. **scroll**: List all points in collection (with optional filter)\n   - Use for batch processing or pagination\n   - Can combine with filter to scroll filtered results\n   - Example: scroll all points, or scroll points where status='active'\n\n3. **delete**: Remove points by IDs or filter\n   - Use with point_ids OR filter (one required)\n   - Permanently deletes matching points\n   - Example: delete points with IDs [10,11,12], or delete where expired=true\n\nDefault: query"
+      zh_Hans: "要执行的操作类型：\n\n1. **query**（查询）：按ID和/或过滤条件检索点\n   - 使用 point_ids 和/或 filter\n   - 返回匹配的点及其元数据/向量\n   - 示例：查询ID为[1,2,3]且category='tech'的点\n\n2. **scroll**（遍历）：列出集合中的所有点（可带过滤条件）\n   - 用于批量处理或分页\n   - 可结合filter遍历过滤后的结果\n   - 示例：遍历所有点，或遍历status='active'的点\n\n3. **delete**（删除）：按ID或过滤条件删除点\n   - 使用 point_ids 或 filter（二选一，必填）\n   - 永久删除匹配的点\n   - 示例：删除ID为[10,11,12]的点，或删除expired=true的点\n\n默认：query"
+    form: llm
+    default: "query"
+  - name: collection
+    type: string
+    required: true
+    label:
+      en_US: Collection Name
+      zh_Hans: 集合名称
+    human_description:
+      en_US: "The name of the Qdrant collection to operate on. Must be an existing collection."
+      zh_Hans: "要操作的 Qdrant 集合名称。必须是已存在的集合。"
+    help:
+      en_US: "The name of the Qdrant collection.\n\n- Must be an existing collection in your Qdrant instance\n- Collection name is case-sensitive\n- Used for all operations: query, scroll, and delete\n\nExamples:\n- 'documents'\n- 'test_collection'\n- 'user_embeddings'"
+      zh_Hans: "Qdrant 集合名称。\n\n- 必须是 Qdrant 实例中已存在的集合\n- 集合名称区分大小写\n- 用于所有操作：query、scroll 和 delete\n\n示例：\n- 'documents'\n- 'test_collection'\n- 'user_embeddings'"
+    form: llm
+  - name: point_ids
+    type: string
+    required: false
+    label:
+      en_US: Point IDs
+      zh_Hans: 点ID列表
+    human_description:
+      en_US: "JSON array of point IDs to query or delete. For query: can combine with filter. For delete: required if filter not provided. Format: '[1, 2, 3]' or '[\"id1\", \"id2\"]'."
+      zh_Hans: "要查询或删除的点ID JSON数组。查询时：可与filter组合使用。删除时：如果未提供filter则必需。格式：'[1, 2, 3]' 或 '[\"id1\", \"id2\"]'。"
+    help:
+      en_US: "Point IDs to query or delete.\n\n**Format**: JSON array string\n- '[1, 2, 3]' (integer IDs)\n- '[\"550e8400-e29b-41d4-a716-446655440000\"]' (UUID strings)\n- '[1, \"uuid1\", 2]' (mixed types)\n\n**Usage by Operation**:\n\n1. **query operation**:\n   - Use alone: Retrieve specific points by IDs\n     Example: point_ids='[1, 2, 3]' → Returns points with IDs 1, 2, 3\n   - Combine with filter: Retrieve points by IDs, then filter results\n     Example: point_ids='[1,2,3,4,5]' + filter='{\"must\":[{\"key\":\"category\",\"match\":{\"value\":\"tech\"}}]}'\n     → Returns only points from [1,2,3,4,5] that also match the filter\n\n2. **delete operation**:\n   - Required if filter is not provided\n   - Deletes specific points by their IDs\n     Example: point_ids='[10, 11, 12]' → Deletes points with IDs 10, 11, 12\n\n3. **scroll operation**:\n   - Not used (scroll operates on all points or filtered points)\n\n**Notes**:\n- IDs can be integers or UUID strings\n- For query: point_ids and filter can be used together\n- For delete: point_ids and filter are mutually exclusive (use one or the other)"
+      zh_Hans: "要查询或删除的点ID。\n\n**格式**：JSON 数组字符串\n- '[1, 2, 3]'（整数ID）\n- '[\"550e8400-e29b-41d4-a716-446655440000\"]'（UUID字符串）\n- '[1, \"uuid1\", 2]'（混合类型）\n\n**各操作的使用方式**：\n\n1. **query 操作**：\n   - 单独使用：按ID检索特定点\n     示例：point_ids='[1, 2, 3]' → 返回ID为1, 2, 3的点\n   - 与filter组合：先按ID检索，再过滤结果\n     示例：point_ids='[1,2,3,4,5]' + filter='{\"must\":[{\"key\":\"category\",\"match\":{\"value\":\"tech\"}}]}'\n     → 只返回[1,2,3,4,5]中同时匹配filter的点\n\n2. **delete 操作**：\n   - 如果未提供filter则必需\n   - 按ID删除特定点\n     示例：point_ids='[10, 11, 12]' → 删除ID为10, 11, 12的点\n\n3. **scroll 操作**：\n   - 不使用此参数（scroll操作所有点或过滤后的点）\n\n**注意事项**：\n- ID可以是整数或UUID字符串\n- query操作：point_ids和filter可以同时使用\n- delete操作：point_ids和filter互斥（二选一）"
+    form: llm
+  - name: filter
+    type: string
+    required: false
+    label:
+      en_US: Filter Expression
+      zh_Hans: 过滤条件
+    human_description:
+      en_US: "Filter expression in JSON format to filter points by metadata conditions. For query: can combine with point_ids. For delete: required if point_ids not provided. For scroll: optional filter while scrolling. ⚠️ Filter fields must have indexes in Qdrant."
+      zh_Hans: "用于按元数据条件过滤点的过滤条件（JSON格式）。查询时：可与point_ids组合使用。删除时：如果未提供point_ids则必需。遍历时：可选的过滤条件。⚠️ 过滤字段必须在Qdrant中创建索引。"
+    help:
+      en_US: "Filter expression in JSON format using Qdrant filter syntax.\n\n**Format**: Qdrant filter JSON object (as string)\n\n**Usage by Operation**:\n\n1. **query operation**:\n   - Use alone: Query all points matching the filter\n     Example: filter='{\"must\":[{\"key\":\"category\",\"match\":{\"value\":\"tech\"}}]}'\n     → Returns all points where category='tech'\n   - Combine with point_ids: Filter the retrieved points\n     Example: point_ids='[1,2,3,4,5]' + filter='{\"must\":[{\"key\":\"category\",\"match\":{\"value\":\"tech\"}}]}'\n     → Returns only points from [1,2,3,4,5] that also have category='tech'\n\n2. **delete operation**:\n   - Required if point_ids is not provided\n   - Deletes all points matching the filter\n     Example: filter='{\"must\":[{\"key\":\"expired\",\"match\":{\"value\":true}}]}'\n     → Deletes all points where expired=true\n\n3. **scroll operation**:\n   - Optional: Filter points while scrolling\n     Example: filter='{\"must\":[{\"key\":\"status\",\"match\":{\"value\":\"active\"}}]}'\n     → Scrolls only points where status='active'\n\n**Filter Examples**:\n\n1. Single field match:\n   '{\"must\": [{\"key\": \"category\", \"match\": {\"value\": \"tech\"}}]}'\n\n2. Multiple conditions (AND):\n   '{\"must\": [\n     {\"key\": \"category\", \"match\": {\"value\": \"tech\"}},\n     {\"key\": \"year\", \"range\": {\"gte\": 2020}}\n   ]}'\n\n3. OR conditions:\n   '{\"should\": [\n     {\"key\": \"category\", \"match\": {\"value\": \"tech\"}},\n     {\"key\": \"category\", \"match\": {\"value\": \"science\"}}\n   ]}'\n\n4. Range filter:\n   '{\"must\": [{\"key\": \"age\", \"range\": {\"gte\": 18, \"lte\": 65}}]}'\n\n5. Complex combination:\n   '{\"must\": [\n     {\"key\": \"status\", \"match\": {\"value\": \"active\"}},\n     {\"should\": [\n       {\"key\": \"category\", \"match\": {\"value\": \"tech\"}},\n       {\"key\": \"category\", \"match\": {\"value\": \"science\"}}\n     ]}\n   ]}'\n\n**⚠️ Important**: Filter fields MUST have indexes in Qdrant!\n- For keyword fields: Create keyword index\n- For integer/float fields: Create numeric index\n- Without indexes, filter operations will fail with error: \"Index required but not found\"\n- Create indexes via Qdrant management UI or API before using filters\n\nSee Qdrant filter documentation for full syntax."
+      zh_Hans: "使用 Qdrant filter 语法的过滤条件（JSON格式）。\n\n**格式**：Qdrant filter JSON 对象（字符串形式）\n\n**各操作的使用方式**：\n\n1. **query 操作**：\n   - 单独使用：查询所有匹配过滤条件的点\n     示例：filter='{\"must\":[{\"key\":\"category\",\"match\":{\"value\":\"tech\"}}]}'\n     → 返回所有category='tech'的点\n   - 与point_ids组合：过滤检索到的点\n     示例：point_ids='[1,2,3,4,5]' + filter='{\"must\":[{\"key\":\"category\",\"match\":{\"value\":\"tech\"}}]}'\n     → 只返回[1,2,3,4,5]中category='tech'的点\n\n2. **delete 操作**：\n   - 如果未提供point_ids则必需\n   - 删除所有匹配过滤条件的点\n     示例：filter='{\"must\":[{\"key\":\"expired\",\"match\":{\"value\":true}}]}'\n     → 删除所有expired=true的点\n\n3. **scroll 操作**：\n   - 可选：在遍历时过滤点\n     示例：filter='{\"must\":[{\"key\":\"status\",\"match\":{\"value\":\"active\"}}]}'\n     → 只遍历status='active'的点\n\n**过滤条件示例**：\n\n1. 单字段匹配：\n   '{\"must\": [{\"key\": \"category\", \"match\": {\"value\": \"tech\"}}]}'\n\n2. 多条件（AND）：\n   '{\"must\": [\n     {\"key\": \"category\", \"match\": {\"value\": \"tech\"}},\n     {\"key\": \"year\", \"range\": {\"gte\": 2020}}\n   ]}'\n\n3. OR 条件：\n   '{\"should\": [\n     {\"key\": \"category\", \"match\": {\"value\": \"tech\"}},\n     {\"key\": \"category\", \"match\": {\"value\": \"science\"}}\n   ]}'\n\n4. 范围过滤：\n   '{\"must\": [{\"key\": \"age\", \"range\": {\"gte\": 18, \"lte\": 65}}]}'\n\n5. 复杂组合：\n   '{\"must\": [\n     {\"key\": \"status\", \"match\": {\"value\": \"active\"}},\n     {\"should\": [\n       {\"key\": \"category\", \"match\": {\"value\": \"tech\"}},\n       {\"key\": \"category\", \"match\": {\"value\": \"science\"}}\n     ]}\n   ]}'\n\n**⚠️ 重要提示**：过滤字段必须在 Qdrant 中创建索引！\n- keyword 类型字段：创建 keyword 索引\n- integer/float 类型字段：创建 numeric 索引\n- 没有索引时，过滤操作会失败，错误：\"Index required but not found\"\n- 使用过滤前，请通过 Qdrant 管理界面或 API 创建索引\n\n完整语法请参考 Qdrant filter 文档。"
+    form: llm
+  - name: limit
+    type: number
+    required: false
+    label:
+      en_US: Result Limit
+      zh_Hans: 返回数量限制
+    human_description:
+      en_US: "Maximum number of results to return. For query with filter: limits filtered results. For scroll: limits points per scroll batch. Not used for query by IDs only. Default: 10."
+      zh_Hans: "返回结果的最大数量。过滤查询时：限制过滤结果数量。遍历时：限制每次遍历的批次大小。仅按ID查询时不使用。默认：10。"
+    help:
+      en_US: "Maximum number of results to return.\n\n**Usage by Operation**:\n\n1. **query operation**:\n   - With filter only: Limits the number of filtered results\n     Example: filter='...' + limit=20 → Returns max 20 points matching filter\n   - With point_ids only: Not used (returns all requested IDs)\n   - With both point_ids and filter: Limits filtered results\n     Example: point_ids='[1,2,3,4,5]' + filter='...' + limit=3\n     → Returns max 3 points from [1,2,3,4,5] that match filter\n\n2. **scroll operation**:\n   - Limits the number of points returned per scroll batch\n     Example: limit=100 → Returns up to 100 points per scroll call\n   - Use pagination (offset) to get more results\n\n3. **delete operation**:\n   - Not used (deletes all matching points)\n\n**Default**: 10\n**Range**: Typically 1-10000 (depends on Qdrant configuration)\n\n**Tips**:\n- For large collections, use smaller limits with pagination\n- For query with filter, limit helps control result size\n- For scroll, limit controls batch size for processing"
+      zh_Hans: "返回结果的最大数量。\n\n**各操作的使用方式**：\n\n1. **query 操作**：\n   - 仅使用filter时：限制过滤结果的数量\n     示例：filter='...' + limit=20 → 返回最多20个匹配filter的点\n   - 仅使用point_ids时：不使用（返回所有请求的ID）\n   - 同时使用point_ids和filter时：限制过滤结果数量\n     示例：point_ids='[1,2,3,4,5]' + filter='...' + limit=3\n     → 从[1,2,3,4,5]中返回最多3个匹配filter的点\n\n2. **scroll 操作**：\n   - 限制每次遍历返回的点数\n     示例：limit=100 → 每次遍历返回最多100个点\n   - 使用分页（offset）获取更多结果\n\n3. **delete 操作**：\n   - 不使用（删除所有匹配的点）\n\n**默认值**：10\n**范围**：通常为1-10000（取决于Qdrant配置）\n\n**提示**：\n- 对于大型集合，使用较小的limit配合分页\n- 对于带filter的查询，limit有助于控制结果大小\n- 对于scroll，limit控制批处理大小"
+    form: llm
+    default: 10
+  - name: with_payload
+    type: boolean
+    required: false
+    label:
+      en_US: With Payload
+      zh_Hans: 包含元数据
+    human_description:
+      en_US: "Include payload (metadata) in returned points. Payload contains custom fields like text, category, tags, etc. Set to false to reduce response size. Default: true."
+      zh_Hans: "返回的点中是否包含元数据（payload）。元数据包含自定义字段，如text、category、tags等。设为false可减少响应大小。默认：true。"
+    help:
+      en_US: "Whether to include payload (metadata) in returned points.\n\n**Payload** contains custom metadata fields stored with each point:\n- Text content, categories, tags, timestamps, etc.\n- Any custom fields you added when upserting points\n\n**Usage**:\n- **true** (default): Include payload in results\n  - Useful when you need metadata (text, category, etc.)\n  - Example: Get points with their text content and categories\n\n- **false**: Exclude payload from results\n  - Reduces response size and improves performance\n  - Use when you only need IDs or vectors\n  - Example: Just check if points exist, or only need vectors\n\n**Applies to**: query and scroll operations (delete doesn't return results)\n\n**Default**: true"
+      zh_Hans: "返回的点中是否包含元数据（payload）。\n\n**Payload（元数据）**包含与每个点一起存储的自定义元数据字段：\n- 文本内容、类别、标签、时间戳等\n- 插入点时添加的任何自定义字段\n\n**使用方式**：\n- **true**（默认）：结果中包含元数据\n  - 需要元数据（文本、类别等）时使用\n  - 示例：获取点及其文本内容和类别\n\n- **false**：结果中不包含元数据\n  - 减少响应大小并提高性能\n  - 仅需要ID或向量时使用\n  - 示例：仅检查点是否存在，或只需要向量\n\n**适用操作**：query 和 scroll 操作（delete 不返回结果）\n\n**默认值**：true"
+    form: llm
+    default: true
+  - name: with_vector
+    type: boolean
+    required: false
+    label:
+      en_US: With Vector
+      zh_Hans: 包含向量
+    human_description:
+      en_US: "Include vector embeddings in returned points. Vectors are large arrays (e.g., 1536 dimensions). Set to true only when needed. Default: false."
+      zh_Hans: "返回的点中是否包含向量嵌入。向量是大型数组（例如1536维）。仅在需要时设为true。默认：false。"
+    help:
+      en_US: "Whether to include vector embeddings in returned points.\n\n**Vectors** are the embedding arrays (e.g., 1536 dimensions for OpenAI embeddings):\n- Large arrays of floating-point numbers\n- Used for similarity search and calculations\n- Significantly increase response size\n\n**Usage**:\n- **false** (default): Exclude vectors from results\n  - Recommended for most use cases\n  - Reduces response size and improves performance\n  - Use when you only need IDs or payload\n  - Example: Get point metadata without vectors\n\n- **true**: Include vectors in results\n  - Use when you need vectors for calculations\n  - Significantly increases response size\n  - Example: Calculate similarity between points, or debug vector values\n\n**Applies to**: query and scroll operations (delete doesn't return results)\n\n**Default**: false\n\n**Performance Note**: Including vectors can make responses 10-100x larger, especially with high-dimensional embeddings."
+      zh_Hans: "返回的点中是否包含向量嵌入。\n\n**向量**是嵌入数组（例如OpenAI嵌入为1536维）：\n- 大型浮点数数组\n- 用于相似度搜索和计算\n- 显著增加响应大小\n\n**使用方式**：\n- **false**（默认）：结果中不包含向量\n  - 适用于大多数用例\n  - 减少响应大小并提高性能\n  - 仅需要ID或元数据时使用\n  - 示例：获取点的元数据而不包含向量\n\n- **true**：结果中包含向量\n  - 需要向量进行计算时使用\n  - 显著增加响应大小\n  - 示例：计算点之间的相似度，或调试向量值\n\n**适用操作**：query 和 scroll 操作（delete 不返回结果）\n\n**默认值**：false\n\n**性能提示**：包含向量可能使响应大小增加10-100倍，特别是对于高维嵌入。"
+    form: llm
+    default: false
+extra:
+  python:
+    source: tools/qdrant.py
