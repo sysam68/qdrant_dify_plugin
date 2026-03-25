@@ -27,8 +27,8 @@ parameters:
       en_US: Payload (Optional)
       zh_Hans: Payload（可选）
     human_description:
-      en_US: "Optional JSON object applied as the Qdrant `payload` for each inserted point. Supports literal text or a mapped variable."
-      zh_Hans: "可选 JSON 对象，会作为每个写入点的 Qdrant `payload`。支持直接输入文本或映射变量。"
+      en_US: "Optional JSON object applied as the Qdrant `payload` for each inserted point. Supports literal text or a mapped variable. The `data` field is always overwritten with the chunk text."
+      zh_Hans: "可选 JSON 对象，会作为每个写入点的 Qdrant `payload`。支持直接输入文本或映射变量。`data` 字段总会被 chunk 文本覆盖。"
     help:
       en_US: |
         Provide a valid JSON object, for example:
@@ -37,6 +37,7 @@ parameters:
         Notes
         • The value must be a JSON object, not an array or plain text.
         • The same payload is applied to every generated point in this upsert.
+        • `payload.data` is always overwritten with the current chunk text.
         • You can bind a variable that resolves to a JSON string/object.
       zh_Hans: |
         请提供合法的 JSON 对象，例如：
@@ -45,6 +46,7 @@ parameters:
         说明
         • 该值必须是 JSON 对象，不能是数组或纯文本。
         • 本次 upsert 生成的每个点都会应用同一个 payload。
+        • `payload.data` 总会被当前 chunk 文本覆盖。
         • 也可以绑定解析为 JSON 字符串/对象的变量。
     form: llm
   - name: vector_name

@@ -314,6 +314,7 @@ class QdrantTool(Tool):
                     return
                 
                 vectors = []
+                texts: list[str] = []
                 
                 # Priority: vectors > texts (if both provided, use vectors)
                 if vectors_str:
@@ -342,7 +343,6 @@ class QdrantTool(Tool):
                 elif texts_str:
                     # Auto-generate vectors from texts
                     # Parse texts: can be JSON string with chunks format or plain string/list
-                    texts = []
                     try:
                         # Try parsing as JSON first (expected format: {"chunks": [{"text": "..."}]})
                         parsed = json.loads(texts_str) if isinstance(texts_str, str) else texts_str
@@ -478,8 +478,12 @@ class QdrantTool(Tool):
                         "id": point_ids[i] if i < len(point_ids) else str(uuid.uuid4()),
                         "vector": vector,
                     }
-                    if i < len(payloads):
-                        item["payload"] = payloads[i]
+                    payload_for_item = dict(payloads[i]) if i < len(payloads) else {}
+                    if i < len(texts):
+                        # `data` is always aligned with the chunk content used to build the embedding.
+                        payload_for_item["data"] = texts[i]
+                    if payload_for_item:
+                        item["payload"] = payload_for_item
                     items.append(item)
                 
                 options = {
